@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Another</title>
+</head>
+<body>
+<h1 align="center">Конвертер валют</h1>
+<!--<form action="#" th:object="${currencyValues}" method="post">-->
+    <h4>Из какой валюты конвертируем</h4>
+    <div th:text="${inCurrencyName}"></div>
+    <label for="inCurrencyValue">Количество исходной валюты</label>
+    <input type="number" name="inCurrencyValue" id="inCurrencyValue" th:value="${inCurrencyValue}" disabled>
+
+    <br>
+
+<h4>В какую валюту конвертируем</h4>
+<div th:text="${outCurrencyName}"></div>
+<label for="inCurrencyValue">Количество конечной валюты</label>
+<input type="number" name="outCurrencyValue" id="outCurrencyValue" th:value="${outCurrencyValue}" disabled>
+<!--    <label for="outCurrencyName">В какую валюту конвертируем</label>-->
+<!--    <select name="outCurrencyName" id="outCurrencyName" th:field="*{currencies}">-->
+<!--        <option th:each="currency: ${currencies}" th:text="${currency}" th:value="${currency}"-->
+<!--                th:selected="${currency=='Доллар США'}"></option>-->
+<!--    </select>-->
+<!--    <label for="outCurrencyValue">Количество итоговой валюты</label>-->
+<!--    <input id="outCurrencyValue" name="outCurrencyValue" type="number" th:text="" disabled>-->
+<!--</form>-->
+
+<br><br>
+
+<!--<button name="convertingButton" th:action="@{/converting}">Конвертировать</button>-->
+</body>
+</html>
