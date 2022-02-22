@@ -17,11 +17,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import static java.lang.Math.round;
@@ -78,17 +79,20 @@ public class MainController {
         String inCurrencyValue = convertingModel.getInCurrencyValue();
         String outCurrencyName = convertingModel.getOutCurrencyName();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String dateToday = dateFormat.format(new Date());
+        java.sql.Date dateToday = new Date(System.currentTimeMillis());
         CurrencyHistory todayCourses = currencyHistoryService
                 .getCurrencyHistoriesByConvertationDate(dateToday);
         if (todayCourses == null) {
+            System.out.println(currencyValues.toString());
             currencyHistoryService.saveCurrencyHistory(
                     new CurrencyHistory(dateToday, currencyNames.toString(), currencyValues.toString()));
             todayCourses = currencyHistoryService
                     .getCurrencyHistoriesByConvertationDate(dateToday);
         }
-        String[] todayCoursesMass = todayCourses.getCurrencyValues().split(",");
+        String[] todayCoursesMass = todayCourses.getCurrencyValues()
+                .replace("[", "")
+                .replace("]", "")
+                .split(",");
         currencyValues = new ArrayList<>();
         for (String currency: todayCoursesMass) {
             currencyValues.add(Double.parseDouble(currency));

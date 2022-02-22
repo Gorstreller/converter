@@ -1,6 +1,7 @@
 package com.kirillvlasovets.test.converter.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "currency_history")
@@ -12,7 +13,7 @@ public class CurrencyHistory {
     private int id;
 
     @Column(name = "convertation_date")
-    private String convertationDate;
+    private Date convertationDate;
 
     @Column(name = "currency_names")
     private String currencyNames;
@@ -23,7 +24,7 @@ public class CurrencyHistory {
     public CurrencyHistory() {
     }
 
-    public CurrencyHistory(String convertationDate, String currencyNames, String currencyValues) {
+    public CurrencyHistory(Date convertationDate, String currencyNames, String currencyValues) {
         this.convertationDate = convertationDate;
         this.currencyNames = currencyNames;
         this.currencyValues = currencyValues;
@@ -37,11 +38,11 @@ public class CurrencyHistory {
         this.id = id;
     }
 
-    public String getConvertationDate() {
+    public Date getConvertationDate() {
         return convertationDate;
     }
 
-    public void setConvertationDate(String convertationDate) {
+    public void setConvertationDate(Date convertationDate) {
         this.convertationDate = convertationDate;
     }
 

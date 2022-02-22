@@ -2,6 +2,7 @@ package com.kirillvlasovets.test.converter.service;
 
 import com.kirillvlasovets.test.converter.entity.CurrencyHistory;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface CurrencyHistoryService {
@@ -13,5 +14,5 @@ public interface CurrencyHistoryService {
 
     public void deleteCurrencyHistory(int id);
 
-    public CurrencyHistory getCurrencyHistoriesByConvertationDate(String convertationDate);
+    public CurrencyHistory getCurrencyHistoriesByConvertationDate(Date convertationDate);
 }
