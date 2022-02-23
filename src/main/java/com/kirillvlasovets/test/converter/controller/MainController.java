@@ -1,112 +1,95 @@
 package com.kirillvlasovets.test.converter.controller;
 
+import com.kirillvlasovets.test.converter.entity.Convertation;
+import com.kirillvlasovets.test.converter.service.ConvertationServiceImpl;
+import com.kirillvlasovets.test.converter.service.ConvertingLogicImpl;
 import com.kirillvlasovets.test.converter.entity.CurrencyHistory;
 import com.kirillvlasovets.test.converter.models.ConvertingModel;
 import com.kirillvlasovets.test.converter.service.CurrencyHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-
-import static java.lang.Math.round;
 
 @Controller
 public class MainController {
     @Autowired
+    private ConvertationServiceImpl convertationService;
+    @Autowired
     private CurrencyHistoryService currencyHistoryService;
+    @Autowired
+    private ConvertingLogicImpl convertingLogic;
 
-    static List<String> currencyNames = null;
-    static List<Double> currencyValues = null;
+    static List<String> currencyNames = new ArrayList<>();
+    static List<Double> currencyValues = new ArrayList<>();
 
     @GetMapping ("/another")
     public String getConvertingModel(Model model) throws Exception {
-        URL url = new URL("https://www.cbr.ru/scripts/XML_daily.asp");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(connection.getInputStream());
-
-        NodeList nodeList = document.getChildNodes();
-        Element lang = null;
-        currencyNames = new ArrayList<>();
-        currencyValues = new ArrayList<>();
-        //проходим по каждому элементу
-        for(int i = 0; i < nodeList.getLength(); i++) {
-            lang = (Element) nodeList.item(i);
-            NodeList list = lang.getElementsByTagName("Name");
-            for (int j = 0; j < list.getLength(); j++) {
-                currencyNames.add(
-                        lang.getElementsByTagName("Name").item(j).getFirstChild().getNodeValue());
-                currencyValues.add(
-                        Double.parseDouble(
-                                lang.getElementsByTagName("Value").item(j).getFirstChild().getNodeValue()
-                                        .replace(',', '.')));
-            }
-            System.out.println(currencyNames);
-            System.out.println(currencyValues);
-        }
+        currencyNames = convertingLogic.getInfoFromCBR("Name");
 
         model.addAttribute("convertingModel", new ConvertingModel());
-
         model.addAttribute("currencies", currencyNames);
-        model.addAttribute("currencyValues", currencyValues);
-        connection.disconnect();
         return "another";
     }
 
     @PostMapping("/another")
-    public String submitConvertingModel(@ModelAttribute ConvertingModel convertingModel, Model model) {
+    public String submitConvertingModel(@ModelAttribute ConvertingModel convertingModel, Model model) throws Exception {
+        long now = System.currentTimeMillis();
+        Date dateToday = new Date(now);
+        Time currentTime = new Time(now);
+
+        CurrencyHistory todayCourses = currencyHistoryService
+                .getCurrencyHistoriesByConvertationDate(dateToday);
+        if (todayCourses == null) {
+            List<String> list = convertingLogic.getInfoFromCBR("Value");
+            for (String value: list) {
+                currencyValues.add(Double.parseDouble(value));
+            }
+            currencyHistoryService.saveCurrencyHistory(
+                    new CurrencyHistory(dateToday, currencyNames.toString(), currencyValues.toString()));
+        }
+        else {
+            todayCourses = currencyHistoryService
+                    .getCurrencyHistoriesByConvertationDate(dateToday);
+            String[] todayCoursesMass = todayCourses.getCurrencyValues()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",");
+            for (String currency: todayCoursesMass) {
+                currencyValues.add(Double.parseDouble(currency));
+            }
+        }
+
         String inCurrencyName = convertingModel.getInCurrencyName();
         String inCurrencyValue = convertingModel.getInCurrencyValue();
         String outCurrencyName = convertingModel.getOutCurrencyName();
 
-        java.sql.Date dateToday = new Date(System.currentTimeMillis());
-        CurrencyHistory todayCourses = currencyHistoryService
-                .getCurrencyHistoriesByConvertationDate(dateToday);
-        if (todayCourses == null) {
-            System.out.println(currencyValues.toString());
-            currencyHistoryService.saveCurrencyHistory(
-                    new CurrencyHistory(dateToday, currencyNames.toString(), currencyValues.toString()));
-            todayCourses = currencyHistoryService
-                    .getCurrencyHistoriesByConvertationDate(dateToday);
-        }
-        String[] todayCoursesMass = todayCourses.getCurrencyValues()
-                .replace("[", "")
-                .replace("]", "")
-                .split(",");
-        currencyValues = new ArrayList<>();
-        for (String currency: todayCoursesMass) {
-            currencyValues.add(Double.parseDouble(currency));
-        }
+        double inCourse = currencyValues.get(currencyNames.indexOf(inCurrencyName));
+        double outCourse = currencyValues.get(currencyNames.indexOf(outCurrencyName));
+        double result = convertingLogic.getConvertedValue(inCourse, outCourse, inCurrencyValue);
 
-        double firstCourse = currencyValues.get(currencyNames.indexOf(inCurrencyName));
-        double secondCourse = currencyValues.get(currencyNames.indexOf(outCurrencyName));
-        double scale = Math.pow(10, 2);
-        double result = round((firstCourse * Double.parseDouble(inCurrencyValue) / secondCourse) * scale) / scale;
+        convertationService.saveConvertation(
+                new Convertation(inCurrencyName, outCurrencyName, Double.parseDouble(inCurrencyValue), result,
+                        dateToday, currentTime));
 
         model.addAttribute("inCurrencyName", inCurrencyName);
         model.addAttribute("inCurrencyValue", inCurrencyValue);
         model.addAttribute("outCurrencyName", outCurrencyName);
         model.addAttribute("outCurrencyValue", result);
         return "converting";
+    }
+
+    @RequestMapping("/history")
+    public String showConvertingHistory(Model model) {
+        model.addAttribute("convertations", convertationService.getAllConvertations());
+        return "history";
     }
 }

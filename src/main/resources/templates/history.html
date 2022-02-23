@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Converting history</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th scope="col">Исходная валюта</th>
+        <th scope="col">Целевая валюта</th>
+        <th scope="col">Исходная сумма</th>
+        <th scope="col">Получаемая сумма</th>
+        <th scope="col">Дата конвертации</th>
+        <th scope="col">Время конвертации</th>
+    </tr>
+    <tr th:each="converting: ${convertations}">
+        <td th:text="${converting.getInCurrencyName()}"></td>
+        <td th:text="${converting.getOutCurrencyName()}"></td>
+        <td th:text="${converting.getInCurrencyValue()}"></td>
+        <td th:text="${converting.getOutCurrencyValue()}"></td>
+        <td th:text="${converting.getConvertationDate()}"></td>
+        <td th:text="${converting.getConvertationTime()}"></td>
+    </tr>
+</table>
+<br>
+<form th:action="@{/another}">
+    <button type="submit" th:name="backToConverting" th:value="backToConverting">Новая конвертация</button>
+</form>
+</body>
+</html>

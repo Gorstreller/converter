@@ -27,8 +27,9 @@
     <br><br>
     <input type="submit" value="Конвертировать">
 </form>
-
-
-<!--<button name="convertingButton" th:action="@{/converting}">Конвертировать</button>-->
+<br>
+<form th:action="@{/history}">
+    <button type="submit" th:name="showHistory" th:value="showHistory">История конвертаций</button>
+</form>
 </body>
 </html>

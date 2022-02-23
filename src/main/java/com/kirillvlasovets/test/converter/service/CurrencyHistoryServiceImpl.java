@@ -15,7 +15,6 @@ public class CurrencyHistoryServiceImpl implements CurrencyHistoryService {
     @Autowired
     private CurrencyHistoryRepository currencyHistoryRepository;
 
-
     @Override
     public List<CurrencyHistory> getAllCurrencyHistory() {
         return currencyHistoryRepository.findAll();
