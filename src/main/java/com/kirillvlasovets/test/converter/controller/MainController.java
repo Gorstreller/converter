@@ -1,7 +1,7 @@
 package com.kirillvlasovets.test.converter.controller;
 
-import com.kirillvlasovets.test.converter.entity.Convertation;
-import com.kirillvlasovets.test.converter.service.ConvertationServiceImpl;
+import com.kirillvlasovets.test.converter.entity.Converting;
+import com.kirillvlasovets.test.converter.service.ConvertingServiceImpl;
 import com.kirillvlasovets.test.converter.service.ConvertingLogicImpl;
 import com.kirillvlasovets.test.converter.entity.CurrencyHistory;
 import com.kirillvlasovets.test.converter.models.ConvertingModel;
@@ -14,82 +14,85 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 public class MainController {
     @Autowired
-    private ConvertationServiceImpl convertationService;
+    private ConvertingServiceImpl convertingService;
     @Autowired
     private CurrencyHistoryService currencyHistoryService;
     @Autowired
     private ConvertingLogicImpl convertingLogic;
 
     static List<String> currencyNames = new ArrayList<>();
-    static List<Double> currencyValues = new ArrayList<>();
 
-    @GetMapping ("/another")
+    @GetMapping ("/new_converting")
     public String getConvertingModel(Model model) throws Exception {
-        currencyNames = convertingLogic.getInfoFromCBR("Name");
+        Map<String, List<String>> mapCurrenciesInfo = convertingLogic.getInfoFromCBR();
+        Map<String, String> currenciesNamesAndCharCodes = new HashMap<>();
+
+        Set<String> keySet = mapCurrenciesInfo.keySet();
+        for (String key : keySet) {
+            currenciesNamesAndCharCodes.put(key, mapCurrenciesInfo.get(key).get(1));
+            currencyNames.add(mapCurrenciesInfo.get(key).get(1));
+        }
 
         model.addAttribute("convertingModel", new ConvertingModel());
-        model.addAttribute("currencies", currencyNames);
-        return "another";
+        model.addAttribute("currencies", currenciesNamesAndCharCodes);
+        return "new_converting";
     }
 
-    @PostMapping("/another")
+    @PostMapping("/converting_result")
     public String submitConvertingModel(@ModelAttribute ConvertingModel convertingModel, Model model) throws Exception {
         long now = System.currentTimeMillis();
-        Date dateToday = new Date(now);
+
+        String dateToday = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
         Time currentTime = new Time(now);
 
-        CurrencyHistory todayCourses = currencyHistoryService
-                .getCurrencyHistoriesByConvertationDate(dateToday);
-        if (todayCourses == null) {
-            List<String> list = convertingLogic.getInfoFromCBR("Value");
-            for (String value: list) {
-                currencyValues.add(Double.parseDouble(value));
-            }
+        Map<String, List<String>> mapCurrenciesInfo;
+        if (currencyHistoryService.getCurrencyHistoriesByExchangeDate(dateToday) == null) {
+            mapCurrenciesInfo = convertingLogic.getInfoFromCBR();
             currencyHistoryService.saveCurrencyHistory(
-                    new CurrencyHistory(dateToday, currencyNames.toString(), currencyValues.toString()));
+                    new CurrencyHistory(dateToday, convertingLogic.mapToStringSerialization(mapCurrenciesInfo)));
         }
         else {
-            todayCourses = currencyHistoryService
-                    .getCurrencyHistoriesByConvertationDate(dateToday);
-            String[] todayCoursesMass = todayCourses.getCurrencyValues()
-                    .replace("[", "")
-                    .replace("]", "")
-                    .split(",");
-            for (String currency: todayCoursesMass) {
-                currencyValues.add(Double.parseDouble(currency));
-            }
+            mapCurrenciesInfo = convertingLogic.stringToMapDeserialization(
+                    currencyHistoryService.getCurrencyHistoriesByExchangeDate(dateToday).getCurrenciesInfo());
         }
 
-        String inCurrencyName = convertingModel.getInCurrencyName();
-        String inCurrencyValue = convertingModel.getInCurrencyValue();
-        String outCurrencyName = convertingModel.getOutCurrencyName();
 
-        double inCourse = currencyValues.get(currencyNames.indexOf(inCurrencyName));
-        double outCourse = currencyValues.get(currencyNames.indexOf(outCurrencyName));
+        String inCurrencyCode = convertingModel.getInCurrencyName();
+        String inCurrencyValue = convertingModel.getInCurrencyValue();
+        String outCurrencyCode = convertingModel.getOutCurrencyName();
+
+        String inCurrencyName = mapCurrenciesInfo.get(inCurrencyCode).get(1);
+        String outCurrencyName = mapCurrenciesInfo.get(outCurrencyCode).get(1);
+
+        double inCourse = Double.parseDouble(mapCurrenciesInfo.get(inCurrencyCode).get(2));
+        double outCourse = Double.parseDouble(mapCurrenciesInfo.get(outCurrencyCode).get(2));
         double result = convertingLogic.getConvertedValue(inCourse, outCourse, inCurrencyValue);
 
-        convertationService.saveConvertation(
-                new Convertation(inCurrencyName, outCurrencyName, Double.parseDouble(inCurrencyValue), result,
+        convertingService.saveConvertation(
+                new Converting(inCurrencyName, outCurrencyName, Double.parseDouble(inCurrencyValue), result,
                         dateToday, currentTime));
 
         model.addAttribute("inCurrencyName", inCurrencyName);
         model.addAttribute("inCurrencyValue", inCurrencyValue);
         model.addAttribute("outCurrencyName", outCurrencyName);
         model.addAttribute("outCurrencyValue", result);
-        return "converting";
+        return "converting_result";
     }
 
     @RequestMapping("/history")
     public String showConvertingHistory(Model model) {
-        model.addAttribute("convertations", convertationService.getAllConvertations());
+        List<Converting> allConvertings = convertingService.getAllConvertings()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+        model.addAttribute("convertings", allConvertings);
         return "history";
     }
 }

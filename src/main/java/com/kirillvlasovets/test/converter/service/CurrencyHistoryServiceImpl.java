@@ -5,7 +5,6 @@ import com.kirillvlasovets.test.converter.entity.CurrencyHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +40,7 @@ public class CurrencyHistoryServiceImpl implements CurrencyHistoryService {
     }
 
     @Override
-    public CurrencyHistory getCurrencyHistoriesByConvertationDate(Date convertationDate) {
-        return currencyHistoryRepository.getCurrencyHistoriesByConvertationDate(convertationDate);
+    public CurrencyHistory getCurrencyHistoriesByExchangeDate(String exchangeDate) {
+        return currencyHistoryRepository.getCurrencyHistoriesByExchangeDate(exchangeDate);
     }
 }

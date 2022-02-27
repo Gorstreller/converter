@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Another</title>
+    <title>Converting result</title>
 </head>
 <body>
 <h1 align="center">Конвертер валют</h1>
@@ -20,7 +20,7 @@
 <input type="number" name="outCurrencyValue" id="outCurrencyValue" th:value="${outCurrencyValue}" disabled>
 
 <br>
-<form th:action="@{/another}">
+<form th:action="@{/new_converting}">
     <button type="submit" th:name="backToConverting" th:value="backToConverting">Новая конвертация</button>
 </form>
 <br>

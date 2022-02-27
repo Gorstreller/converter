@@ -2,25 +2,25 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Another</title>
+    <title>New converting</title>
 </head>
 <body>
 <h1 align="center">Конвертер валют</h1>
-<form th:action="@{/another}" th:object="${convertingModel}" method="POST">
+<form th:action="@{/converting_result}" th:object="${convertingModel}" method="POST">
     <label for="inCurrencyName">Из какой валюты конвертируем</label>
     <select name="inCurrencyName" id="inCurrencyName">
-        <option th:each="currency: ${currencies}" th:text="${currency}" th:value="${currency}"
-                th:selected="${currency=='Евро'}"></option>
+        <option th:each="currency: ${currencies}" th:text="${currency.getValue()}" th:value="${currency.getKey()}"
+                th:selected="${currency.getValue()=='Евро'}"></option>
     </select>
     <label for="inCurrencyValue">Количество исходной валюты</label>
-    <input type="number" name="inCurrencyValue" id="inCurrencyValue">
+    <input id="inCurrencyValue" name="inCurrencyValue" step="0.01" type="number">
 
     <br>
 
     <label for="outCurrencyName">В какую валюту конвертируем</label>
     <select name="outCurrencyName" id="outCurrencyName">
-        <option th:each="currency: ${currencies}" th:text="${currency}" th:value="${currency}"
-                th:selected="${currency=='Доллар США'}"></option>
+        <option th:each="currency: ${currencies}" th:text="${currency.getValue()}" th:value="${currency.getKey()}"
+                th:selected="${currency.getValue()=='Доллар США'}"></option>
     </select>
     <label for="outCurrencyValue">Количество итоговой валюты</label>
     <input id="outCurrencyValue" name="outCurrencyValue" type="number" disabled>
