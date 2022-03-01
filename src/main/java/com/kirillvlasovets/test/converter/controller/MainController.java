@@ -29,6 +29,11 @@ public class MainController {
 
     static List<String> currencyNames = new ArrayList<>();
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping ("/new_converting")
     public String getConvertingModel(Model model) throws Exception {
         Map<String, List<String>> mapCurrenciesInfo = convertingLogic.getInfoFromCBR();

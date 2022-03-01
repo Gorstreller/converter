@@ -10,16 +10,13 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+import javax.xml.xpath.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.Math.round;
 
@@ -30,15 +27,18 @@ public class ConvertingLogicImpl implements ConvertingLogic {
 
     @Override
     public Map<String, List<String>> getInfoFromCBR() throws Exception {
-//        URL url = new URL("https://www.cbr.ru/scripts/XML_daily.asp");
-//        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//        connection.setRequestMethod("GET");
+        URL urlNames = new URL("https://cbr.ru/scripts/XML_val.asp?d=0");
+        HttpURLConnection connectionNames = (HttpURLConnection) urlNames.openConnection();
+        connectionNames.setRequestMethod("GET");
+
+        URL urlRates = new URL("https://www.cbr.ru/scripts/XML_daily.asp");
+        HttpURLConnection connectionRates = (HttpURLConnection) urlRates.openConnection();
+        connectionRates.setRequestMethod("GET");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-//        Document documentExchangeRates = builder.parse(connection.getInputStream());
-        Document documentExchangeRates = builder.parse(new File("C:\\Users\\Vlaso\\IdeaProjects\\XML\\Today Rates.xml"));
-        Document documentInfoForNames = builder.parse(new File("C:\\Users\\Vlaso\\IdeaProjects\\XML\\Info For Names.xml"));
+        Document documentExchangeRates = builder.parse(connectionRates.getInputStream());
+        Document documentInfoForNames = builder.parse(connectionNames.getInputStream());
 
         NodeList nodeListExchangeRates = documentExchangeRates.getChildNodes();
         Element elementExchangeRates;
@@ -63,11 +63,8 @@ public class ConvertingLogicImpl implements ConvertingLogic {
                         .item(j)
                         .getFirstChild()
                         .getNodeValue();
-                name = evaluateXPath(documentInfoForNames, "/Valuta/Item[@ID='" + valuteId + "']/Name/text()").get(0);
-//                name = elementExchangeRates.getElementsByTagName("Name")
-//                        .item(j)
-//                        .getFirstChild()
-//                        .getNodeValue();
+                name = evaluateXPath(documentInfoForNames,
+                        "/Valuta/Item[@ID='" + valuteId + "']/Name/text()").get(0);
                 value = Double.parseDouble(elementExchangeRates.getElementsByTagName("Value")
                         .item(j)
                         .getFirstChild()
@@ -84,7 +81,8 @@ public class ConvertingLogicImpl implements ConvertingLogic {
             }
         }
 
-//        connection.disconnect();
+        connectionNames.disconnect();
+        connectionRates.disconnect();
         return mapExchangeRates;
     }
 
@@ -104,15 +102,11 @@ public class ConvertingLogicImpl implements ConvertingLogic {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-//        Map<String, Double> mapExchangeRates = Arrays.stream(exchangeRates.split(","))
-//                .map(entry -> entry.split("="))
-//                .collect(Collectors.toMap(entry -> entry[0].trim(), entry -> Double.parseDouble(entry[1])));
         return mapExchangeRates;
     }
 
     @Override
     public String mapToStringSerialization(Map<String, List<String>> mapExchangeRates) {
-
         String jsonResult = null;
         try {
             jsonResult = mapper.writerWithDefaultPrettyPrinter()
@@ -120,16 +114,10 @@ public class ConvertingLogicImpl implements ConvertingLogic {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-//        System.out.println(mapExchangeRates.keySet());
-//        String mapAsString = mapExchangeRates.keySet().stream()
-//                .map(key -> key + "=" + mapExchangeRates.get(key))
-//                .collect(Collectors.joining(","));
         return jsonResult;
     }
 
-
-    private List<String> evaluateXPath(Document document, String xpathExpression)
-    {
+    private List<String> evaluateXPath(Document document, String xpathExpression) {
         // Create XPathFactory object
         XPathFactory xpathFactory = XPathFactory.newInstance();
 

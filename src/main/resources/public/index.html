@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/static/mainStyles.css}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Start page</title>
 </head>
 <body>
 <h3>Конвертер</h3>
-<label for="inCurrencyName">Из какой валюты конвертируем</label>
-<select name="inCurrencyName" id="inCurrencyName">
-    <option value="Доллар" selected>Доллар</option>
-    <option value="Евро">Евро</option>
-    <option value="Рубль">Рубль</option>
-</select>
+<form th:action="@{/new_converting}">
+    <button th:type="submit" th:name="btnStartWork" th:value="startWork">Начать работу</button>
+</form>
 </body>
 </html>

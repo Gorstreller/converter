@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/mainStyles.css}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Converting history</title>
 </head>
 <body>
+<header>
+    <h1>Конвертер валют</h1>
+    <form th:action="@{/logout}" method="POST">
+        <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
+    </form>
+</header>
 <table>
     <tr>
         <th scope="col">Исходная валюта</th>

@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/mainStyles.css}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Converting result</title>
 </head>
 <body>
-<h1 align="center">Конвертер валют</h1>
+<header>
+    <h1 align="center">Конвертер валют</h1>
+    <form th:action="@{/logout}" method="POST">
+        <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
+    </form>
+</header>
 
 <h4>Из какой валюты конвертируем</h4>
 <div th:text="${inCurrencyName}"></div>

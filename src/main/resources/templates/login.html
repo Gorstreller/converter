@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link th:href="@{/mainStyles.css}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Login page</title>
+</head>
+<body>
+<header>
+  <h1 align="center">Конвертер валют</h1>
+</header>
+<form name='formLoginPage' th:action="@{/login}" method='POST'>
+  <fieldset>
+    <legend>Авторизация</legend>
+    <div th:if="${param.error}" class="alert alert-error">
+      Неверный логин или пароль!
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+      Выход из учётной записи
+    </div>
+    <label for="username">Логин:</label>
+    <input id="username" name="username" type="text">
+    <label for="password">Пароль:</label>
+    <input id="password" name="password" type="password">
+    <div class="form-actions">
+      <button class="btn" type="submit">Вход</button>
+    </div>
+  </fieldset>
+</form>
+</body>
+</html>

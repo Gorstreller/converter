@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/mainStyles.css}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>New converting</title>
 </head>
 <body>
-<h1 align="center">Конвертер валют</h1>
+<header>
+    <h1 align="center">Конвертер валют</h1>
+    <form th:action="@{/logout}" method="POST">
+        <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
+    </form>
+</header>
 <form th:action="@{/converting_result}" th:object="${convertingModel}" method="POST">
     <label for="inCurrencyName">Из какой валюты конвертируем</label>
     <select name="inCurrencyName" id="inCurrencyName">
@@ -25,7 +31,7 @@
     <label for="outCurrencyValue">Количество итоговой валюты</label>
     <input id="outCurrencyValue" name="outCurrencyValue" type="number" disabled>
     <br><br>
-    <input type="submit" value="Конвертировать">
+    <button type="submit" th:name="btnDoConverting" th:value="doConverting">Конвертировать</button>
 </form>
 <br>
 <form th:action="@{/history}">

@@ -2,9 +2,14 @@ package com.kirillvlasovets.test.converter.entity;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -47,8 +52,10 @@ public class Converting implements Comparable<Converting> {
         this.exchangeTime = convertationTime;
     }
 
+    @SneakyThrows
     @Override
     public int compareTo(Converting converting) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
         if (this.exchangeDate == null || converting.exchangeDate == null) {
             return 0;
         }
@@ -56,7 +63,7 @@ public class Converting implements Comparable<Converting> {
             return this.exchangeTime.compareTo(converting.exchangeTime);
         }
         else {
-            return this.exchangeDate.compareTo(converting.exchangeDate);
+            return formatter.parse(this.exchangeDate).compareTo(formatter.parse(converting.exchangeDate));
         }
     }
 }
