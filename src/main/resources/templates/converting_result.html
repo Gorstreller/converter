@@ -2,34 +2,40 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link th:href="@{/mainStyles.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100&subset=cyrillic,latin">
     <meta charset="UTF-8">
     <title>Converting result</title>
 </head>
 <body>
-<header>
-    <h1 align="center">Конвертер валют</h1>
+<header class="container">
+    <h1>Конвертер валют</h1>
     <form th:action="@{/logout}" method="POST">
         <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
     </form>
 </header>
 
-<h4>Из какой валюты конвертируем</h4>
-<div th:text="${inCurrencyName}"></div>
-<label for="inCurrencyValue">Количество исходной валюты</label>
-<input type="number" name="inCurrencyValue" id="inCurrencyValue" th:value="${inCurrencyValue}" disabled>
+<div class="info-block">
+    <label>Из какой валюты конвертируем:</label>
+    <br>
+    <label th:text="${inCurrencyName}" class="valute"></label>
+    <br>
+    <label for="inCurrencyValue">Количество исходной валюты:</label>
+    <input type="number" name="inCurrencyValue" id="inCurrencyValue" th:value="${inCurrencyValue}" disabled>
+</div>
 
-<br>
+<div class="info-block">
+    <label>В какую валюту конвертируем:</label>
+    <br>
+    <label th:text="${outCurrencyName}" class="valute"></label>
+    <br>
+    <label for="outCurrencyValue">Количество конечной валюты:</label>
+    <input type="number" name="outCurrencyValue" id="outCurrencyValue" th:value="${outCurrencyValue}" disabled>
+</div>
 
-<h4>В какую валюту конвертируем</h4>
-<div th:text="${outCurrencyName}"></div>
-<label for="outCurrencyValue">Количество конечной валюты</label>
-<input type="number" name="outCurrencyValue" id="outCurrencyValue" th:value="${outCurrencyValue}" disabled>
-
-<br>
 <form th:action="@{/new_converting}">
-    <button type="submit" th:name="backToConverting" th:value="backToConverting">Новая конвертация</button>
+    <button class="new-converting" type="submit" th:name="backToConverting" th:value="backToConverting">Новая конвертация</button>
 </form>
-<br>
+
 <form th:action="@{/history}">
     <button type="submit" th:name="showHistory" th:value="showHistory">История конвертаций</button>
 </form>

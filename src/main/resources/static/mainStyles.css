@@ -45,10 +45,77 @@ table {
 }
 
 /*Зададим свои стили*/
+body {
+    background: burlywood;
+    color: #888;
+    font: 300 16px/22px "Roboto", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
 h1 {
-    color: #a9b2b9;
-    font-size: 14px;
+    color: black;
+    font-size: 30px;
     font-weight: 400;
     text-transform: uppercase;
+    margin-top: 22px;
+    margin-bottom: 20px;
+}
+
+.container {
+    margin: 0 auto;
+    width: 960px;
+}
+
+.container {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+header button {
+    float: right;
+}
+
+input, select {
+    background-color: bisque;
+    font-size: 18px;
+}
+
+.info-block {
+    margin-top: 20px;
+}
+
+button {
+    background-color: antiquewhite;
+    color: black;
+    font-size: 22px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: aqua;
+    color: dimgray;
+}
+
+label, table {
+    color: black;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.valute {
+    font-weight: 400;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: 20px;
+ }
+
+th, td {
+    border: 2px solid grey;
+    padding: 10px 15px;
+}
+
+.new-converting {
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
