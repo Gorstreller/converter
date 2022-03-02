@@ -87,9 +87,9 @@ public class ConvertingLogicImpl implements ConvertingLogic {
     }
 
     @Override
-    public double getConvertedValue(double inCourse, double outCourse, String inCurrencyValue) {
+    public double getConvertedValue(double inCourse, double outCourse, double inCurrencyValue) {
         double scale = Math.pow(10, 2);
-        return round((inCourse * Double.parseDouble(inCurrencyValue) / outCourse) * scale) / scale;
+        return round((inCourse * inCurrencyValue / outCourse) * scale) / scale;
     }
 
     @Override

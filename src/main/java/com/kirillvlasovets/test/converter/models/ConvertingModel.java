@@ -1,9 +1,14 @@
 package com.kirillvlasovets.test.converter.models;
 
+import lombok.Getter;
 
+import javax.validation.constraints.NotEmpty;
+
+//@Getter
 public class ConvertingModel {
 
     private String inCurrencyName;
+    @NotEmpty(message = "Ошибка формата")
     private String inCurrencyValue;
     private String outCurrencyName;
     private String outCurrencyValue;

@@ -9,11 +9,10 @@ import com.kirillvlasovets.test.converter.service.CurrencyHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -27,7 +26,8 @@ public class MainController {
     @Autowired
     private ConvertingLogicImpl convertingLogic;
 
-    static List<String> currencyNames = new ArrayList<>();
+    private static List<String> currencyNames = new ArrayList<>();
+    private Map<String, String> currenciesNamesAndCharCodes = new HashMap<>();
 
     @GetMapping("/login")
     public String login() {
@@ -37,7 +37,7 @@ public class MainController {
     @GetMapping ("/new_converting")
     public String getConvertingModel(Model model) throws Exception {
         Map<String, List<String>> mapCurrenciesInfo = convertingLogic.getInfoFromCBR();
-        Map<String, String> currenciesNamesAndCharCodes = new HashMap<>();
+//        Map<String, String> currenciesNamesAndCharCodes = new HashMap<>();
 
         Set<String> keySet = mapCurrenciesInfo.keySet();
         for (String key : keySet) {
@@ -50,8 +50,14 @@ public class MainController {
         return "new_converting";
     }
 
-    @PostMapping("/converting_result")
-    public String submitConvertingModel(@ModelAttribute ConvertingModel convertingModel, Model model) throws Exception {
+    @RequestMapping(path = "/converting_result", method = RequestMethod.POST)
+    public String submitConvertingModel(@Valid @ModelAttribute ConvertingModel convertingModel, BindingResult bindingResult, Model model) throws Exception {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("currencies", currenciesNamesAndCharCodes);
+            model.addAttribute("convertingModel", convertingModel);
+            return "new_converting";
+        }
+
         long now = System.currentTimeMillis();
 
         String dateToday = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
@@ -76,9 +82,20 @@ public class MainController {
         String inCurrencyName = mapCurrenciesInfo.get(inCurrencyCode).get(1);
         String outCurrencyName = mapCurrenciesInfo.get(outCurrencyCode).get(1);
 
+//        double inCourse = 0;
+//        double outCourse = 0;
+//        double result = 0;
+//        try {
+//            inCourse = Double.parseDouble(mapCurrenciesInfo.get(inCurrencyCode).get(2));
+//            outCourse = Double.parseDouble(mapCurrenciesInfo.get(outCurrencyCode).get(2));
+//            result = convertingLogic.getConvertedValue(inCourse, outCourse, inCurrencyValue);
+//        }
+//        catch (java.lang.NumberFormatException exception) {
+//
+//        }
         double inCourse = Double.parseDouble(mapCurrenciesInfo.get(inCurrencyCode).get(2));
         double outCourse = Double.parseDouble(mapCurrenciesInfo.get(outCurrencyCode).get(2));
-        double result = convertingLogic.getConvertedValue(inCourse, outCourse, inCurrencyValue);
+        double result = convertingLogic.getConvertedValue(inCourse, outCourse, Double.parseDouble(inCurrencyValue));
 
         convertingService.saveConvertation(
                 new Converting(inCurrencyName, outCurrencyName, Double.parseDouble(inCurrencyValue), result,

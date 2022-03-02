@@ -7,7 +7,7 @@ import java.util.Map;
 public interface ConvertingLogic {
     public Map<String, List<String>> getInfoFromCBR() throws Exception;
 
-    public double getConvertedValue(double inCourse, double outCourse, String inCurrencyValue);
+    public double getConvertedValue(double inCourse, double outCourse, double inCurrencyValue);
 
     public Map<String, List<String>> stringToMapDeserialization(String exchangeRates);
 

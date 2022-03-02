@@ -9,9 +9,6 @@
 <body>
 <header class="container">
     <h1>Конвертер валют</h1>
-    <form th:action="@{/logout}" method="POST">
-        <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
-    </form>
 </header>
 
 <div class="info-block">
@@ -38,6 +35,9 @@
 
 <form th:action="@{/history}">
     <button type="submit" th:name="showHistory" th:value="showHistory">История конвертаций</button>
+</form>
+<form th:action="@{/logout}" method="POST">
+    <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
 </form>
 </body>
 </html>
