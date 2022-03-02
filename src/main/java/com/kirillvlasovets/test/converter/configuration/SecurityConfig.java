@@ -16,18 +16,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/css/**", "/js/**");
+        web.ignoring().antMatchers("/css/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+//        http.authorizeRequests()
+//                .antMatchers("/new_converting").hasAnyRole("BANKER")
+//                .antMatchers("/converting_result").hasAnyRole("BANKER")
+//                .antMatchers("/history").hasAnyRole("BANKER");
+
         http.authorizeRequests()
                 .antMatchers("/new_converting").hasAnyRole("BANKER")
                 .antMatchers("/converting_result").hasAnyRole("BANKER")
-                .antMatchers("/history").hasAnyRole("BANKER");
-
-        http.authorizeRequests()
+                .antMatchers("/history").hasAnyRole("BANKER")
+                .antMatchers("/resources/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

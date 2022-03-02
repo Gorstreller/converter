@@ -121,3 +121,24 @@ th, td {
     margin-left: 20px;
     margin-bottom: 20px;
 }
+
+/*fieldset {*/
+/*    display: block;*/
+/*    margin-inline-start: 2px;*/
+/*    margin-inline-end: 2px;*/
+/*    padding-block-start: 0.35em;*/
+/*    padding-inline-start: 0.75em;*/
+/*    padding-inline-end: 0.75em;*/
+/*    padding-block-end: 0.625em;*/
+/*    min-inline-size: min-content;*/
+/*    border-width: 2px;*/
+/*    border-style: groove;*/
+/*    border-color: black;*/
+/*    border-image: initial;*/
+/*}*/
+
+.lbl-authorization {
+    font-size: 30px;
+    font-weight: 400;
+    color: black;
+}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link th:href="@{/static/mainStyles.css}" rel="stylesheet">
+    <link th:href="@{/css/mainStyles.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100&subset=cyrillic,latin">
     <meta charset="UTF-8">
     <title>Start page</title>
@@ -9,10 +9,10 @@
 <body>
 <header class="container">
     <h1>Конвертер валют</h1>
-    <form th:action="@{/new_converting}">
-        <button th:type="submit" th:name="btnStartWork" th:value="startWork">Начать работу</button>
-    </form>
 </header>
+<form th:action="@{/new_converting}">
+    <button th:type="submit" th:name="btnStartWork" th:value="startWork">Начать работу</button>
+</form>
 <form th:action="@{/logout}" method="POST">
     <button type="submit" th:name="btnLogout" th:value="logout">Выход</button>
 </form>

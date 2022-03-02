@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <link th:href="@{/mainStyles.css}" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100&subset=cyrillic,latin">
+  <link th:href="@{/css/mainStyles.css}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Login page</title>
 </head>
@@ -12,7 +11,8 @@
 </header>
 <form name='formLoginPage' th:action="@{/login}" method='POST'>
   <fieldset>
-    <legend>Авторизация</legend>
+    <label class="lbl-authorization">Авторизация</label>
+    <br>
     <div th:if="${param.error}" class="alert alert-error">
       Неверный логин или пароль!
     </div>
